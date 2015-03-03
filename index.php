@@ -5,7 +5,7 @@
  	$temp_url = "http://mpowering.digital-campus.org/api/v1/resource/search/";
  	$temp_url .= "?format=json";
  	$temp_url .= "&username=demo";
- 	$temp_url .= "&api_key=39b4043c69b8db27ddba761ba82479d00c8ccbb";
+ 	$temp_url .= "&api_key=39b4043c69b8db27ddba761ba82479d00c8ccbb1";
  	$temp_url .= "&q=". $_POST['q'];
  	curl_setopt($curl, CURLOPT_URL, $temp_url );
  	curl_setopt($curl, CURLOPT_HTTPGET, 1 );
