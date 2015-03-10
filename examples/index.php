@@ -1,5 +1,10 @@
 <?php 
+
+include_once '../mpower-api/api.php';
+
  if (isset($_POST['q'])){
+ 	
+ 	$config = new mPowerConfig('http://localhost:8000/','demo','39b4043c69b8db27ddba761ba82479d00c8ccbb1');
  	$curl = curl_init();
  	curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1 );
  	$temp_url = "http://mpowering.digital-campus.org/api/v1/resource/search/";
