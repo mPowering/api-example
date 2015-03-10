@@ -24,6 +24,7 @@ class mPowerAPI {
 	
 	
 	# add resource
+	# check resource with same name doesn't already exist
 	# add basic info
 	# add image
 	# add files
