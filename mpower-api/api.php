@@ -18,7 +18,7 @@ class mPowerAPI {
 	}
 	
 	function search($query){
-		$results = $this->exec('resource/search',['q'=>$query],'get');
+		$results = $this->exec('api/v1/resource/search/',['q'=>$query],'get');
 		return $results;
 	}
 	
@@ -44,7 +44,7 @@ class mPowerAPI {
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1 );
 
-		$temp_url = $this->base_url."api/v1/".$object."/";
+		$temp_url = $this->base_url.$object;
 		$temp_url .= "?format=json";
 		$temp_url .= "&username=".$this->username;
 		$temp_url .= "&api_key=".$this->api_key;
