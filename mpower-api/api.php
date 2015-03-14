@@ -5,8 +5,9 @@ class mPowerAPI {
 	private $base_url;
 	private $username;
 	private $api_key;
+	private $debug;
 	
-	public function __construct($base_url, $username, $api_key){
+	public function __construct($base_url, $username, $api_key, $debug=false){
 		
 		if (substr($base_url, -strlen('/'))==='/'){
 			$this->base_url = $base_url;
@@ -15,6 +16,7 @@ class mPowerAPI {
 		}
 		$this->username = $username;
 		$this->api_key = $api_key;
+		$this->debug = $debug;
 	}
 	
 	function search($query){
@@ -27,39 +29,47 @@ class mPowerAPI {
 	# add resource
 	function add_resource($resource){
 		$status = 0;
-		$resource_uri = false;
+		$resource_id = false;
 		# add basic info
 		$result = $this->exec('api/v1/resource/',['title'=>$resource->title,'description'=>$resource->description],'post',$status);
 		switch ($status){
 			case 201:
 				echo "success \n\n";
-				$resource_uri = $result->resource_uri;
+				$resource_id = $result->id;
 				break;
 			default:
-				echo "Error: ".$results->error;
+				echo "Error: ".$result->error;
 				return;
 		}
 		
 		# add tags
 		foreach ($resource->tags as $tag){
 			$status = 0;
+			$tag_resource_id = false;
 			$result = $this->exec('api/v1/tag/',['name'=>$tag],'get',$status);
-			print_r($result);
-			echo $status;
 			switch ($status){
 				case 200:
-					echo "success \n\n";
-					$tag_resource_uri = $result->resource_uri;
+					if($result->meta->total_count == 1){
+						$tag_resource_id = $result->objects[0]->id;
+					} else {
+						continue;
+					}
 					break;
 				default:
-					echo "Error: ".$result->error;
+					continue;
 					break;
+			}
+			
+			if ($tag_resource_id){
+				# add tag to resource
+				$status = 0;
+				$result = $this->exec('api/v1/resourcetag/',['tag_id'=>$tag_resource_id,'resource_id'=>$resource_id],'post',$status);
 			}
 		}
 		
-		# add image
-		# add files
-		# add urls
+		# TODO add image
+		# TODO add files
+		# TODO add urls
 		
 	}
 
@@ -108,6 +118,18 @@ class mPowerResource{
 	public $tags = array();
 	public $files = array();
 	public $urls = array();
+}
+
+class mPowerFile{
+	public $file;
+	public $title;
+	public $description;
+}
+
+class mPowerURL{
+	public $url;
+	public $title;
+	public $description;
 }
 
 ?>
