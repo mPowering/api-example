@@ -8,7 +8,7 @@ $resource = new mPowerResource();
 $resource->title = "another test ".date('Y-m-d H:i:s');
 $resource->description = "description of something or other";
 $resource->image = "/home/alex/temp/image.jpg";
-$resource->tags = ['Global Health Media Project', 'blah'];
+$resource->tags = ['Global Health Media Project', 'Africa', 'Laptop', 'smartphone'];
 
 $url = new mPowerURL();
 $url->url = "http://duckduckgo.com";

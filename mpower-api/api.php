@@ -1,5 +1,12 @@
 <?php 
 
+function flush_buffers(){
+	ob_end_flush();
+	@ob_flush();
+	@flush();
+	ob_start();
+}
+
 class mPowerAPI {
 	
 	private $base_url;
@@ -44,6 +51,7 @@ class mPowerAPI {
 		
 		# add tags
 		foreach ($resource->tags as $tag){
+			flush_buffers();
 			$status = 0;
 			$tag_resource_id = false;
 			$result = $this->exec('api/v1/tag/',['name'=>$tag],'get',$status);
@@ -78,6 +86,7 @@ class mPowerAPI {
 		# add image
 		if (isset($resource->image)){
 			echo "Uploading image... ";
+			flush_buffers();
 			$status = 0;
 			$post =  array(	'resource_id' => $resource_id,
 							'image_file' => new CurlFile($resource->image, 'image/*')
@@ -96,6 +105,7 @@ class mPowerAPI {
 		# add files
 		foreach ($resource->files as $file){
 			echo "Uploading file '".$file->file."'... ";
+			flush_buffers();
 			$status = 0;
 			$post =  array(	'resource_id' => $resource_id,
 					'title' => $file->title,
@@ -116,6 +126,7 @@ class mPowerAPI {
 		# add urls
 		foreach ($resource->urls as $url){
 			echo "Adding url '".$url->url."'... ";
+			flush_buffers();
 			$status = 0;
 			$post =  array(	'resource_id'=>$resource_id,
 							'url'=>$url->url,
