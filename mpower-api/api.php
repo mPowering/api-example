@@ -34,7 +34,7 @@ class mPowerAPI {
 		$result = $this->exec('api/v1/resource/',['title'=>$resource->title,'description'=>$resource->description],'post',$status);
 		switch ($status){
 			case 201:
-				echo $resource->title ." successfully created";
+				echo "'".$resource->title ."' created<br/>";
 				$resource_id = $result->id;
 				break;
 			default:
@@ -52,6 +52,7 @@ class mPowerAPI {
 					if($result->meta->total_count == 1){
 						$tag_resource_id = $result->objects[0]->id;
 					} else {
+						echo "Tag '".$tag."' not found<br/>";
 						continue;
 					}
 					break;
@@ -64,20 +65,37 @@ class mPowerAPI {
 				# add tag to resource
 				$status = 0;
 				$result = $this->exec('api/v1/resourcetag/',['tag_id'=>$tag_resource_id,'resource_id'=>$resource_id],'post',$status);
+				switch ($status){
+					case 201:
+						echo "Tag '".$tag."' added to resource<br/>";
+						break;
+					default:
+						break;
+				}
 			}
 		}
 		
 		# add image
 		if (isset($resource->image)){
+			echo "Uploading image... ";
 			$status = 0;
 			$post =  array(	'resource_id' => $resource_id,
 							'image_file' => new CurlFile($resource->image, 'image/*')
 							);
 			$this->exec_upload('api/upload/image/',$post,$status);
+			switch ($status){
+				case 200:
+					echo "uploaded<br/>";
+					break;
+				default:
+					echo "ERROR uploading<br/>";
+					break;
+			}
 		}
 		
-		# TODO add files
+		# add files
 		foreach ($resource->files as $file){
+			echo "Uploading file '".$file->file."'... ";
 			$status = 0;
 			$post =  array(	'resource_id' => $resource_id,
 					'title' => $file->title,
@@ -85,12 +103,38 @@ class mPowerAPI {
 					'resource_file' => new CurlFile($file->file, 'unknown/*')
 			);
 			$this->exec_upload('api/upload/file/',$post,$status);
+			switch ($status){
+				case 201:
+					echo "uploaded<br/>";
+					break;
+				default:
+					echo "ERROR uploading<br/>";
+					break;
+			}
 		}
+		
 		# add urls
 		foreach ($resource->urls as $url){
+			echo "Adding url '".$url->url."'... ";
 			$status = 0;
-			$result = $this->exec('api/v1/resourceurl/',['resource_id'=>$resource_id,'url'=>$url->url,'title'=>$url->title,'description'=>$url->description],'post',$status);
+			$post =  array(	'resource_id'=>$resource_id,
+							'url'=>$url->url,
+							'title'=>$url->title,
+							'description'=>$url->description
+							);
+
+			$result = $this->exec('api/v1/resourceurl/',$post,'post',$status);
+			switch ($status){
+				case 201:
+					echo "added<br/>";
+					break;
+				default:
+					echo "ERROR adding<br/>";
+					break;
+			}
 		}
+		
+		echo "Finished adding resource '".$resource->title."'";
 	}
 
 	# edit/update resource

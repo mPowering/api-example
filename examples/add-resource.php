@@ -8,7 +8,7 @@ $resource = new mPowerResource();
 $resource->title = "another test ".date('Y-m-d H:i:s');
 $resource->description = "description of something or other";
 $resource->image = "/home/alex/temp/image.jpg";
-$resource->tags = ['Medical Aid Films'];
+$resource->tags = ['Global Health Media Project', 'blah'];
 
 $url = new mPowerURL();
 $url->url = "http://duckduckgo.com";
@@ -17,7 +17,7 @@ $url->description = "search engine";
 array_push($resource->urls,$url);
 
 $file1 = new mPowerFile();
-$file1->file = "/home/alex/temp/hews.csv";
+$file1->file = "/home/alex/temp/hews1.csv";
 $file1->title = "HEWs";
 $file1->description = "all users";
 array_push($resource->files,$file1);
