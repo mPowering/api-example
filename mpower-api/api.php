@@ -44,6 +44,12 @@ class mPowerAPI {
 				echo "'".$resource->title ."' created<br/>";
 				$resource_id = $result->id;
 				break;
+			case 401:
+				echo "Unauthorized";
+				return;
+			case 500:
+				print_r($result);
+				return;
 			default:
 				echo "Error: ".$result->error;
 				return;
@@ -157,8 +163,7 @@ class mPowerAPI {
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1 );
 
-		$temp_url = $this->base_url.$object;
-		$temp_url .= "?format=json";		
+		$temp_url = $this->base_url.$object;	
 		
 		if($type == 'post'){
 			$json = json_encode($data_array);
@@ -170,7 +175,7 @@ class mPowerAPI {
 		} else {
 			curl_setopt($curl, CURLOPT_HTTPGET, 1 );
 			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: ApiKey '.$this->username.":".$this->api_key));
-			$temp_url .= "&".http_build_query($data_array);
+			$temp_url .= "?".http_build_query($data_array);
 		}
 		curl_setopt($curl, CURLOPT_URL, $temp_url );
 		$data = curl_exec($curl);
