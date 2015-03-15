@@ -34,7 +34,7 @@ class mPowerAPI {
 		$result = $this->exec('api/v1/resource/',['title'=>$resource->title,'description'=>$resource->description],'post',$status);
 		switch ($status){
 			case 201:
-				echo "success \n\n";
+				echo $resource->title ." successfully created";
 				$resource_id = $result->id;
 				break;
 			default:
@@ -67,10 +67,30 @@ class mPowerAPI {
 			}
 		}
 		
-		# TODO add image
-		# TODO add files
-		# TODO add urls
+		# add image
+		if (isset($resource->image)){
+			$status = 0;
+			$post =  array(	'resource_id' => $resource_id,
+							'image_file' => new CurlFile($resource->image, 'image/*')
+							);
+			$this->exec_upload('api/upload/image/',$post,$status);
+		}
 		
+		# TODO add files
+		foreach ($resource->files as $file){
+			$status = 0;
+			$post =  array(	'resource_id' => $resource_id,
+					'title' => $file->title,
+					'description' => $file->description,
+					'resource_file' => new CurlFile($file->file, 'unknown/*')
+			);
+			$this->exec_upload('api/upload/file/',$post,$status);
+		}
+		# add urls
+		foreach ($resource->urls as $url){
+			$status = 0;
+			$result = $this->exec('api/v1/resourceurl/',['resource_id'=>$resource_id,'url'=>$url->url,'title'=>$url->title,'description'=>$url->description],'post',$status);
+		}
 	}
 
 	# edit/update resource
@@ -83,17 +103,18 @@ class mPowerAPI {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1 );
 
 		$temp_url = $this->base_url.$object;
-		$temp_url .= "?format=json";
-		$temp_url .= "&username=".$this->username;
-		$temp_url .= "&api_key=".$this->api_key;
+		$temp_url .= "?format=json";		
 		
 		if($type == 'post'){
 			$json = json_encode($data_array);
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
 			curl_setopt($curl, CURLOPT_POST,1);
-			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($json) ));
+			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: ApiKey '.$this->username.":".$this->api_key, 
+															'Content-Type: application/json', 
+															'Content-Length: ' . strlen($json) ));
 		} else {
 			curl_setopt($curl, CURLOPT_HTTPGET, 1 );
+			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: ApiKey '.$this->username.":".$this->api_key));
 			$temp_url .= "&".http_build_query($data_array);
 		}
 		curl_setopt($curl, CURLOPT_URL, $temp_url );
@@ -105,8 +126,29 @@ class mPowerAPI {
 			$data='{"error":"server not found"}';
 		}
 		$json = json_decode($data);		
-		return $json;
-			
+		return $json;	
+	}
+	
+	
+	private function exec_upload($object, $post, &$status){
+	
+		$temp_url = $this->base_url.$object;
+
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1 );
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: ApiKey '.$this->username.":".$this->api_key));
+		curl_setopt($curl, CURLOPT_URL, $temp_url );
+		curl_setopt($curl, CURLOPT_POST,1);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
+		$result = curl_exec($curl);
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+		if($status == 401){
+			$data='{"error":"unauthorized"}';
+		} else if ($status == 0){
+			$data='{"error":"server not found"}';
+		}
+		return;
 	}
 	
 }
