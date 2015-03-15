@@ -11,7 +11,7 @@ $resource->description = "description of something or other";
 $resource->image = "/home/alex/temp/image.jpg";
 
 // Append tags
-$resource->tags = ['Global Health Media Project', 'Africa', 'Laptop', 'smartphone'];
+$resource->tags = ['Global Health Media Project', 'Africa', 'Laptop', 'Smartphone', 'Tablet'];
 
 // Append URLs
 $url = new mPowerURL();
