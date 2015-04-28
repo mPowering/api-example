@@ -1,9 +1,9 @@
 <?php 
 
-include_once '../mpower-api/api.php';
+include_once '../orb-api/api.php';
 
  if (isset($_POST['q'])){
-	$api = new mPowerAPI('http://localhost:8000','demo','39b4043c69b8db27ddba761ba82479d00c8ccbb1');
+	$api = new ORBAPI('http://localhost:8000','demo','39b4043c69b8db27ddba761ba82479d00c8ccbb1');
 	$results =  $api->search($_POST['q']);
  }
 ?>
@@ -12,7 +12,7 @@ include_once '../mpower-api/api.php';
 </head>
 <body>
 
-<h2>Demo of searching mPowering using the API</h2>
+<h2>Demo of searching ORB using the API</h2>
 <form action=""  method ="post">
 
 <input type="text" name="q" id="q" value="<?php  if (isset($_POST['q'])) {echo $_POST['q'];} ?>"/>

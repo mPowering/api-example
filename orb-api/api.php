@@ -7,7 +7,7 @@ function flush_buffers(){
 	ob_start();
 }
 
-class mPowerAPI {
+class ORBAPI {
 	
 	private $base_url;
 	private $username;
@@ -213,7 +213,7 @@ class mPowerAPI {
 	
 }
 
-class mPowerResource{
+class ORBResource{
 	public $title;
 	public $description;
 	public $image;
@@ -222,13 +222,13 @@ class mPowerResource{
 	public $urls = array();
 }
 
-class mPowerFile{
+class ORBResourceFile{
 	public $file;
 	public $title;
 	public $description;
 }
 
-class mPowerURL{
+class ORBResourceURL{
 	public $url;
 	public $title;
 	public $description;
