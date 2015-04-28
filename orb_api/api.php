@@ -1,12 +1,5 @@
 <?php 
 
-function flush_buffers(){
-	ob_end_flush();
-	@ob_flush();
-	@flush();
-	ob_start();
-}
-
 class ORBAPI {
 	
 	private $base_url;
@@ -28,7 +21,8 @@ class ORBAPI {
 	
 	function search($query){
 		$status = 0;
-		$results = $this->exec('api/v1/resource/search/',['q'=>$query],'get',$status);
+		$data = array('q'=>$query);
+		$results = $this->exec('api/v1/resource/search/',$data,'get',$status);
 		return $results;
 	}
 	
@@ -37,8 +31,12 @@ class ORBAPI {
 	function add_resource($resource){
 		$status = 0;
 		$resource_id = false;
+		
+		$data = array('title'=>$resource->title,
+						'description'=>$resource->description);
+		
 		# add basic info
-		$result = $this->exec('api/v1/resource/',['title'=>$resource->title,'description'=>$resource->description],'post',$status);
+		$result = $this->exec('api/v1/resource/',$data,'post',$status);
 		switch ($status){
 			case 201:
 				echo "'".$resource->title ."' created<br/>";
@@ -57,10 +55,12 @@ class ORBAPI {
 		
 		# add tags
 		foreach ($resource->tags as $tag){
-			flush_buffers();
 			$status = 0;
 			$tag_resource_id = false;
-			$result = $this->exec('api/v1/tag/',['name'=>$tag],'get',$status);
+			
+			$data = array('name'=>$tag);
+			
+			$result = $this->exec('api/v1/tag/',$data,'get',$status);
 			switch ($status){
 				case 200:
 					if($result->meta->total_count == 1){
@@ -78,7 +78,10 @@ class ORBAPI {
 			if ($tag_resource_id){
 				# add tag to resource
 				$status = 0;
-				$result = $this->exec('api/v1/resourcetag/',['tag_id'=>$tag_resource_id,'resource_id'=>$resource_id],'post',$status);
+				$data = array('tag_id'=>$tag_resource_id,
+								'resource_id'=>$resource_id);
+				
+				$result = $this->exec('api/v1/resourcetag/',$data,'post',$status);
 				switch ($status){
 					case 201:
 						echo "Tag '".$tag."' added to resource<br/>";
@@ -92,7 +95,6 @@ class ORBAPI {
 		# add image
 		if (isset($resource->image)){
 			echo "Uploading image... ";
-			flush_buffers();
 			$status = 0;
 			$post =  array(	'resource_id' => $resource_id,
 							'image_file' => new CurlFile($resource->image, 'image/*')
@@ -111,7 +113,6 @@ class ORBAPI {
 		# add files
 		foreach ($resource->files as $file){
 			echo "Uploading file '".$file->file."'... ";
-			flush_buffers();
 			$status = 0;
 			$post =  array(	'resource_id' => $resource_id,
 					'title' => $file->title,
@@ -132,7 +133,6 @@ class ORBAPI {
 		# add urls
 		foreach ($resource->urls as $url){
 			echo "Adding url '".$url->url."'... ";
-			flush_buffers();
 			$status = 0;
 			$post =  array(	'resource_id'=>$resource_id,
 							'url'=>$url->url,

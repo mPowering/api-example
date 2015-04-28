@@ -1,6 +1,6 @@
 <?php 
 
-include_once '../orb-api/api.php';
+include_once '../orb_api/api.php';
 
 $api = new ORBAPI('http://localhost:8000','demo','39b4043c69b8db27ddba761ba82479d00c8ccbb1');
 
