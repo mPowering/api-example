@@ -24,7 +24,7 @@ include_once ('../orb_api/api.php');
 	if (isset($results)){
 		?><ul><?php 
 		foreach($results->objects as $r){
-			echo "<li><a href='".$r->url. "'>".$r->title."</a></li>";
+			echo "<li><a href='resource.php?id=".$r->id. "'>".$r->title."</a></li>";
 		}
 		?></ul>
 		<?php 	} ?>

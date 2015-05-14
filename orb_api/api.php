@@ -25,7 +25,11 @@ class ORBAPI {
 		$results = $this->exec('api/v1/resource/search/',$data,'get',$status);
 		return $results;
 	}
-	
+	# get resource
+	function get_resource($id){
+		$resource_json = $this->exec('api/v1/resource/'.$id."/",null,'get',$status);
+		return $resource_json;
+	}
 	
 	# add resource
 	function add_resource($resource){
@@ -175,7 +179,9 @@ class ORBAPI {
 		} else {
 			curl_setopt($curl, CURLOPT_HTTPGET, 1 );
 			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: ApiKey '.$this->username.":".$this->api_key));
-			$temp_url .= "?".http_build_query($data_array);
+			if ($data_array){
+				$temp_url .= "?".http_build_query($data_array);
+			}
 		}
 		curl_setopt($curl, CURLOPT_URL, $temp_url );
 		$data = curl_exec($curl);
